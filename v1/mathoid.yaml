@@ -17,7 +17,7 @@ paths:
         formats. Just append the value of the header to `/media/math/{format}/`
         and perform a GET request against that URL.
 
-        Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
+        Stability: [Deprecated](https://www.mediawiki.org/wiki/API_versioning#Deprecated).
       parameters:
         - name: type
           in: path
@@ -84,6 +84,10 @@ paths:
               uri: /wikimedia.org/sys/mathoid/check/{type}
               headers: '{{ request.headers }}'
               body: '{{ request.body }}'
+            return:
+              status: "{{ get_from_sys.status }}"
+              headers: "{{ merge({'deprecation': '@1788134400' }, get_from_sys.headers) }}"
+              body: "{{ get_from_sys.body }}"
 
   /math/formula/{hash}:
     get:
@@ -94,7 +98,7 @@ paths:
         Returns the previously-stored formula via `/media/math/check/{type}` for
         the given hash.
 
-        Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
+        Stability: [Deprecated](https://www.mediawiki.org/wiki/API_versioning#Deprecated).
       parameters:
         - name: hash
           in: path
@@ -129,6 +133,10 @@ paths:
               method: get
               uri: /wikimedia.org/sys/mathoid/formula/{hash}
               headers: '{{ request.headers }}'
+            return:
+              status: "{{ get_from_sys.status }}"
+              headers: "{{ merge({'deprecation': '@1788134400' }, get_from_sys.headers) }}"
+              body: "{{ get_from_sys.body }}"
 
   /math/render/{format}/{hash}:
     get:
@@ -142,7 +150,7 @@ paths:
         `x-resource-location` header denoting the hash ID of the POST data. Once
         obtained, this endpoint has to be used to obtain the actual render.
 
-        Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
+        Stability: [Deprecated](https://www.mediawiki.org/wiki/API_versioning#Deprecated).
       parameters:
         - name: format
           in: path
@@ -197,7 +205,7 @@ paths:
               status: 2xx
             return:
               status: 200
-              headers: "{{ merge({ 'cache-control': options.cache-control }, check_storage.headers) }}"
+              headers: "{{ merge({'deprecation': '@1788134400', 'cache-control': options.cache-control }, check_storage.headers) }}"
               body: '{{ check_storage.body }}'
         - postdata:
             request:
@@ -210,3 +218,7 @@ paths:
                 content-type: application/json
                 x-resource-location: '{{ request.params.hash }}'
               body: '{{postdata.body}}'
+            return:
+              status: "{{ mathoid.status }}"
+              headers: "{{ merge({'deprecation': '@1788134400' }, mathoid.headers) }}"
+              body: "{{ mathoid.body }}"
